@@ -6,7 +6,7 @@ metadata:
 components:
   - name: workstation
     container:
-      # Imagem publica (sem registry privado): o Copilot CLI e o AI-DLC sao instalados no postStart.
+      # Imagem publica (sem registry privado): instale o Copilot CLI e o AI-DLC com o comando setup.
       image: registry.access.redhat.com/ubi9/nodejs-22:latest
       memoryRequest: 1Gi
       memoryLimit: 2Gi
@@ -19,7 +19,7 @@ components:
         - name: AIDLC_DIR
           value: /projects/battle-knights-aidlc-challenge/aidlc
 commands:
-  - id: post-start
+  - id: setup
     exec:
       component: workstation
       workingDir: ${PROJECT_SOURCE}
@@ -29,6 +29,3 @@ commands:
       component: workstation
       workingDir: ${PROJECT_SOURCE}
       commandLine: bash workstation/scripts/verify-workstation.sh
-events:
-  postStart:
-    - post-start
