@@ -1,0 +1,34 @@
+schemaVersion: 2.2.0
+metadata:
+  name: aidlc-workstation
+  displayName: Workstation AI-DLC
+  description: Workspace com GitHub Copilot CLI e AI-DLC da AWS; artefatos em aidlc/.
+components:
+  - name: workstation
+    container:
+      # Imagem publica (sem registry privado): o Copilot CLI e o AI-DLC sao instalados no postStart.
+      image: registry.access.redhat.com/ubi9/nodejs-22:latest
+      memoryRequest: 1Gi
+      memoryLimit: 2Gi
+      cpuRequest: 500m
+      cpuLimit: "2"
+      mountSources: true
+      sourceMapping: /projects
+      # O token GH_TOKEN chega do Secret copilot-token (rotulos de automount); nao e definido aqui.
+      env:
+        - name: AIDLC_DIR
+          value: /projects/battle-knights-aidlc-challenge/aidlc
+commands:
+  - id: post-start
+    exec:
+      component: workstation
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: bash workstation/scripts/post-start.sh
+  - id: verify
+    exec:
+      component: workstation
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: bash workstation/scripts/verify-workstation.sh
+events:
+  postStart:
+    - post-start
